@@ -60,6 +60,8 @@ for (const modName of enabledMods) {
 		tags: []
 	}
 
+	console.log(`Parsing ${modName}...`);
+
 	if (modFolderNames.includes(modName)) {
 		const modFolderPath = join(modsFolderPath, modName);
 		const modFolderWalkEntries = await Array.fromAsync(walk(modFolderPath, { skip: [/\.ini$/] }));
@@ -83,7 +85,9 @@ for (const modName of enabledMods) {
 
 			const modInfoUrl = `${nexusmodsApiUrl}/${modId}.json`;
 
-			const {value: cachedModInfo} = await kv.get(["cache", game, modId]);
+			const key = ["modlist-tools", "cache", game, modId];
+
+			const {value: cachedModInfo} = await kv.get(key);
 
 			if (cachedModInfo === null) {
 				const modInfoResponse = await fetch(
@@ -98,6 +102,8 @@ for (const modName of enabledMods) {
 	
 				if (modInfoResponse.ok) {
 					const modInfo = await modInfoResponse.json();
+
+					await kv.set(key, modInfo);
 	
 					const {
 						summary
