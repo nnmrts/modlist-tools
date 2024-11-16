@@ -45,13 +45,13 @@ const modFolderNames = modsFolderEntries
 	.filter(({ isDirectory }) => isDirectory)
 	.map(({ name }) => name);
 
+const game = env.get("GAME");
+
 const nexusmodsApiUrl = `https://api.nexusmods.com/v1/games/${game}/mods`;
 
 const modsWithPlugins = [];
 
 const kv = await openKv();
-
-const game = env.get("GAME");
 
 for (const modName of enabledMods) {
 	const modObject = {
