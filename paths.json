@@ -1,0 +1,6 @@
+{
+	"modlist": "modlist.txt",
+	"plugins": "plugins.txt",
+	"mods": "mods",
+	"parseOutput": "mods.json"
+}

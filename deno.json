@@ -1,0 +1,13 @@
+{
+	"tasks": {
+		"parse": "deno run -A --env-file=.env parse.js"
+	},
+	"imports": {
+		"@std/fs": "jsr:@std/fs@^1.0.5",
+		"@std/ini": "jsr:@std/ini@^0.225.2",
+		"@std/path": "jsr:@std/path@^1.0.8"
+	},
+	"unstable": [
+		"kv"
+	]
+}
