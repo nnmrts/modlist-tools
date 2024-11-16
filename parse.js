@@ -74,11 +74,13 @@ const {
 							(...replaceArguments) => {
 								const { variable: environmentVariable } = replaceArguments.at(-1);
 
-								if (environmentVariable === undefined) {
+								const environmentVariableValue = env.get(environmentVariable);
+
+								if (environmentVariableValue === undefined) {
 									throw new Error(`Environment variable ${environmentVariable} not found.`);
 								}
 
-								return environmentVariable;
+								return environmentVariableValue;
 							}
 						)
 				];
