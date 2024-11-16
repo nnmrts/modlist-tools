@@ -1,15 +1,33 @@
-import { join, relative } from "@std/path";
-import { parse } from "@std/ini";
 import { walk } from "@std/fs";
+import { parse } from "@std/ini";
+import { join, relative } from "@std/path";
+
+import {
+	getCachedNexusModsMod, isVanillaMod, parseVanillaMod, setCachedNexusModsMod
+} from "./parse/_exports.js";
+
+/**
+ * @import { Mod } from "./_common/_exports.js";
+ */
 
 const {
 	cwd,
 	env,
-	openKv,
-	readTextFile,
 	readDir,
+	readTextFile,
 	writeTextFile
 } = Deno;
+
+const game = env.get("GAME");
+const apiKey = env.get("NEXUS_MODS_API_KEY");
+
+if (game === undefined) {
+	throw new Error("GAME environment variable is not set.");
+}
+
+if (apiKey === undefined) {
+	throw new Error("NEXUS_MODS_API_KEY environment variable is not set.");
+}
 
 const pathsFileName = "paths.json";
 
@@ -19,58 +37,67 @@ const pathsFileContent = await readTextFile(pathsFilePath);
 
 const {
 	modlist: modlistFilePath,
-	plugins: pluginsFilePath,
 	mods: modsFolderPath,
-	parseOutput: parseOutputFilePath
+	parseOutput: parseOutputFilePath,
+	plugins: pluginsFilePath
 } = JSON.parse(pathsFileContent);
 
 const modlistFileContent = await readTextFile(modlistFilePath);
 
 const enabledMods = modlistFileContent
-	.split(/\r?\n/)
-	.filter(line => line.startsWith("*") || line.startsWith("+"))
-	.map(line => line.slice(1).trim())
+	.split(/\r?\n/u)
+	.filter((line) => line.startsWith("*") || line.startsWith("+"))
+	.map((line) => line.slice(1).trim())
 	.toReversed();
 
 const pluginsFileContent = await readTextFile(pluginsFilePath);
 
-const enabledPlugins = pluginsFileContent
-	.split(/\r?\n/)
-	.filter(line => line.startsWith("*"))
-	.map(line => line.slice(1).trim());
+const disabledPlugins = new Set(
+	pluginsFileContent
+		.split(/\r?\n/u)
+		.filter((line) => !line.startsWith("*"))
+		.map((line) => line.slice(1).trim())
+);
 
 const modsFolderEntries = await Array.fromAsync(readDir(modsFolderPath));
 
-const modFolderNames = modsFolderEntries
+const modFolderNames = new Set(modsFolderEntries
 	.filter(({ isDirectory }) => isDirectory)
-	.map(({ name }) => name);
+	.map(({ name }) => name));
 
-const game = env.get("GAME");
+const nexusModsApiUrl = `https://api.nexusmods.com/v1/games/${game}/mods`;
 
-const nexusmodsApiUrl = `https://api.nexusmods.com/v1/games/${game}/mods`;
-
-const modsWithPlugins = [];
-
-const kv = await openKv();
+/**
+ * @type {Mod[]}
+ */
+const mods = [];
 
 for (const modName of enabledMods) {
-	const modObject = {
-		name: modName,
+	/**
+	 * @type {Mod}
+	 */
+	let mod = {
 		files: [],
+		name: modName,
+		summary: null,
 		tags: []
-	}
+	};
 
-	console.log(`Parsing ${modName}...`);
+	console.info(`Parsing ${modName}...`);
 
-	if (modFolderNames.includes(modName)) {
+	if (modFolderNames.has(modName)) {
 		const modFolderPath = join(modsFolderPath, modName);
-		const modFolderWalkEntries = await Array.fromAsync(walk(modFolderPath, { skip: [/\.ini$/] }));
+		const modFolderWalkEntries = await Array.fromAsync(walk(modFolderPath, { skip: [/\.ini$/u] }));
 
 		const modFilePaths = modFolderWalkEntries
 			.filter(({ isFile }) => isFile)
-			.map(({ path }) => ({path: relative(modFolderPath, path), tags: []}));
+			.map(({ path }) => ({
+				enabled: !disabledPlugins.has(path),
+				path: relative(modFolderPath, path),
+				tags: []
+			}));
 
-		modObject.files = modFilePaths;
+		mod.files = modFilePaths;
 
 		const metaFilePath = join(modFolderPath, "meta.ini");
 
@@ -79,53 +106,67 @@ for (const modName of enabledMods) {
 
 			const {
 				General: {
-					modid: modId
+					modid: modIdString
 				}
-			} = parse(metaFileContent);
+			} = /** @type {{General: {modid: string}}} */ (parse(metaFileContent));
 
-			const modInfoUrl = `${nexusmodsApiUrl}/${modId}.json`;
+			const modId = Number(modIdString);
 
-			const key = ["modlist-tools", "cache", game, modId];
+			const nexusModsModUrl = `${nexusModsApiUrl}/${modId}.json`;
 
-			const {value: cachedModInfo} = await kv.get(key);
+			const cachedNexusModsMod = await getCachedNexusModsMod({
+				game,
+				modId
+			});
 
-			if (cachedModInfo === null) {
-				const modInfoResponse = await fetch(
-					modInfoUrl,
+			if (cachedNexusModsMod === null) {
+				const nexusModsModResponse = await fetch(
+					nexusModsModUrl,
 					{
 						headers: new Headers({
-							"accept": "application/json",
-							"apikey": env.get("NEXUSMODS_API_KEY")
+							accept: "application/json",
+							apikey: apiKey
 						})
 					}
 				);
-	
-				if (modInfoResponse.ok) {
-					const modInfo = await modInfoResponse.json();
 
-					await kv.set(key, modInfo);
-	
+				if (nexusModsModResponse.ok) {
+					const nexusModsMod = await nexusModsModResponse.json();
+
+					await setCachedNexusModsMod({
+						game,
+						mod: nexusModsMod,
+						modId
+					});
+
 					const {
 						summary
-					} = modInfo;
-	
-					modObject.summary = summary;
+					} = nexusModsMod;
+
+					mod.summary = summary;
 				}
 			}
 			else {
-				modObject.summary = cachedModInfo.summary;
+				mod.summary = cachedNexusModsMod.summary;
 			}
-
-			
 		}
 		catch {
 			// do nothing
 		}
 	}
+	else if (isVanillaMod({
+		game,
+		mod
+	})) {
+		mod = parseVanillaMod({
+			game,
+			mod
+		});
+	}
 
-	modsWithPlugins.push(modObject);
+	mods.push(mod);
 }
 
-const parseOutputFileContent = JSON.stringify(modsWithPlugins, null, "\t");
+const parseOutputFileContent = JSON.stringify(mods, null, "\t");
 
 await writeTextFile(parseOutputFilePath, parseOutputFileContent);

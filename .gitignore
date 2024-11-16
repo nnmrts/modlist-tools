@@ -1,6 +1,4 @@
 .env
-modlist.txt
-plugins.txt
-mods.json
 paths.json
-/mods
+/data
+node_modules

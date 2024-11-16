@@ -1,19 +1,9 @@
 {
-	"tasks": {
-		"parse": "deno run -A --env-file=.env parse.js"
-	},
-	"imports": {
-		"@radashi-org/radashi": "jsr:@radashi-org/radashi@^12.2.3",
-		"@std/fs": "jsr:@std/fs@^1.0.5",
-		"@std/ini": "jsr:@std/ini@^0.225.2",
-		"@std/path": "jsr:@std/path@^1.0.8"
-	},
-	"unstable": [
-		"kv"
-	],
 	"compilerOptions": {
+		"allowJs": true,
 		"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
+		"alwaysStrict": true,
 		"checkJs": true,
 		"exactOptionalPropertyTypes": true,
 		"jsx": "react-jsx",
@@ -28,6 +18,10 @@
 		"noUncheckedIndexedAccess": false,
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
-		"strict": true
-	}
+		"strict": true,
+		"noEmit": true
+	},
+	"include": [
+		"./**/*"
+	]
 }

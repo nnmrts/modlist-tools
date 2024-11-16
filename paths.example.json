@@ -1,6 +1,8 @@
 {
-	"modlist": "modlist.txt",
-	"plugins": "plugins.txt",
-	"mods": "mods",
+	"modlist": "%LocalAppData%\\ModOrganizer\\Starfield\\profiles\\Default\\modlist.txt",
+	"plugins": "%LocalAppData%\\ModOrganizer\\Starfield\\profiles\\Default\\plugins.txt",
+	"mods": "%LocalAppData%\\ModOrganizer\\Starfield\\mods",
+	"masterlist": "%LocalAppData%\\LOOT\\games\\Starfield\\masterlist.yaml",
+	"userlist": "%LocalAppData%\\LOOT\\games\\Starfield\\userlist.yaml",
 	"parseOutput": "mods.json"
 }

@@ -1,0 +1,16 @@
+{
+	"name": "modlist-tools",
+	"version": "0.1.0",
+	"main": "parse.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "MIT",
+	"description": "",
+	"devDependencies": {
+		"@pumpn/eslint-config": "^15.5.3",
+		"eslint": "9.14.0"
+	},
+	"type": "module"
+}
