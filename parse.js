@@ -45,7 +45,7 @@ const modFolderNames = modsFolderEntries
 	.filter(({ isDirectory }) => isDirectory)
 	.map(({ name }) => name);
 
-const nexusmodsApiUrl = "https://api.nexusmods.com/v1/games/starfield/mods";
+const nexusmodsApiUrl = `https://api.nexusmods.com/v1/games/${game}/mods`;
 
 const modsWithPlugins = [];
 
