@@ -11,36 +11,82 @@ import {
  */
 
 const {
-	cwd,
+	build: {
+		os
+	},
 	env,
 	readDir,
 	readTextFile,
 	writeTextFile
 } = Deno;
 
-const game = env.get("GAME");
-const apiKey = env.get("NEXUS_MODS_API_KEY");
+const {
+	game,
+	modlistRawFilePath,
+	modsRawFolderPath,
+	nexusModsApiKey,
+	parseOutputRawFilePath,
+	pluginsRawFilePath
+} = Object.fromEntries(
+	[
+		["game", "GAME"],
+		["nexusModsApiKey", "NEXUS_MODS_API_KEY"],
+		["modlistRawFilePath", "MODLIST_FILE_PATH"],
+		["modsRawFolderPath", "MODS_FOLDER_PATH"],
+		["parseOutputRawFilePath", "PARSE_OUTPUT_FILE_PATH"],
+		["pluginsRawFilePath", "PLUGINS_FILE_PATH"]
+	]
+		.map(([key, variable]) => {
+			const value = env.get(variable);
 
-if (game === undefined) {
-	throw new Error("GAME environment variable is not set.");
-}
+			if (value === undefined) {
+				throw new Error(`${variable} environment variable is not set.`);
+			}
 
-if (apiKey === undefined) {
-	throw new Error("NEXUS_MODS_API_KEY environment variable is not set.");
-}
-
-const pathsFileName = "paths.json";
-
-const pathsFilePath = join(cwd(), pathsFileName);
-
-const pathsFileContent = await readTextFile(pathsFilePath);
+			return [key, value];
+		})
+);
 
 const {
-	modlist: modlistFilePath,
-	mods: modsFolderPath,
-	parseOutput: parseOutputFilePath,
-	plugins: pluginsFilePath
-} = JSON.parse(pathsFileContent);
+	modlistFilePath,
+	modsFolderPath,
+	parseOutputFilePath,
+	pluginsFilePath
+} = Object.fromEntries(
+	Object.entries({
+		modlistRawFilePath,
+		modsRawFolderPath,
+		parseOutputRawFilePath,
+		pluginsRawFilePath
+	})
+		.map(([key, rawPath]) => {
+			const normalKey = key
+				.replace(/Raw(?=(?:File|Folder)Path$)/u, "");
+
+			if (os === "windows") {
+			// const shorthandMatches = rawPath.matchAll(/%(?<variable>[^%]+)%/gu);
+
+				return [
+					normalKey,
+					rawPath
+						.replaceAll(
+							/%(?<variable>[^%]+)%/gu,
+							(...replaceArguments) => {
+								const { variable: environmentVariable } = replaceArguments.at(-1);
+
+								if (environmentVariable === undefined) {
+									throw new Error(`Environment variable ${environmentVariable} not found.`);
+								}
+
+								return environmentVariable;
+							}
+						)
+				];
+			}
+
+			return [normalKey, rawPath];
+		})
+);
 
 const modlistFileContent = await readTextFile(modlistFilePath);
 
@@ -125,7 +171,7 @@ for (const modName of enabledMods) {
 					{
 						headers: new Headers({
 							accept: "application/json",
-							apikey: apiKey
+							apikey: nexusModsApiKey
 						})
 					}
 				);
