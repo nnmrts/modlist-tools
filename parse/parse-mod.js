@@ -37,6 +37,8 @@ const disabledPlugins = new Set(
 const nexusModsApiUrl = `https://api.nexusmods.com/v1/games/${game}/mods`;
 const nexusModsBaseUrl = `https://www.nexusmods.com/${game}/mods`;
 
+const maximumDescriptionLength = 10_000;
+
 /**
  *
  * @param {string} modFolderPath
@@ -177,6 +179,10 @@ const parseMod = async (modFolderPath) => {
 					}
 					else {
 						nexusModsMod.requirements = [];
+					}
+
+					if (nexusModsMod.description.length > 10_000) {
+						nexusModsMod.description = "";
 					}
 
 					await setCachedNexusModsMod({
