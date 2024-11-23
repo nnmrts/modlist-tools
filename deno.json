@@ -3,10 +3,13 @@
 		"parse": "deno run -A --env-file=.env parse.js"
 	},
 	"imports": {
+		"@pumpn/type-party": "jsr:@pumpn/type-party@^0.1.17",
 		"@radashi-org/radashi": "jsr:@radashi-org/radashi@^12.2.3",
 		"@std/fs": "jsr:@std/fs@^1.0.5",
 		"@std/ini": "jsr:@std/ini@^0.225.2",
-		"@std/path": "jsr:@std/path@^1.0.8"
+		"@std/path": "jsr:@std/path@^1.0.8",
+		"@std/yaml": "jsr:@std/yaml@^1.0.5",
+		"jsdom": "npm:jsdom@^25.0.1"
 	},
 	"unstable": [
 		"kv"
@@ -28,6 +31,13 @@
 		"noUncheckedIndexedAccess": false,
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
-		"strict": true
-	}
+		"strict": true,
+		"lib": [
+			"deno.ns",
+			"dom",
+			"dom.iterable",
+			"dom.asynciterable"
+		]
+	},
+	"nodeModulesDir": "none"
 }

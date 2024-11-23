@@ -8,7 +8,7 @@
 */
 
 /**
- * @import { ModFile } from "./mod.doc/_exports.js";
+ * @import { ModFile, ModRequirement } from "./mod.doc/_exports.js";
  */
 
 /**
@@ -17,4 +17,6 @@
  * @property {string|null} summary - The mod summary.
  * @property {readonly ModFile[]} files - The mod files.
  * @property {readonly string[]} tags - The mod tags.
+ * @property {number|null} id - The Nexus Mods ID or for vanilla mods a manually assigned nonpositive number.
+ * @property {readonly ModRequirement[]} requirements - The requirements.
  */
