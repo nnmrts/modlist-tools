@@ -71,7 +71,10 @@ for (const { enabled, name } of rawMods) {
 	if (modFolderNames.has(name)) {
 		const modFolderPath = join(modsFolderPath, name);
 
-		mod = await parseMod(modFolderPath);
+		mod = {
+			...mod,
+			...(await parseMod(modFolderPath))
+		};
 	}
 	else if (
 		isVanillaMod({
@@ -79,10 +82,13 @@ for (const { enabled, name } of rawMods) {
 			mod
 		})
 	) {
-		mod = parseVanillaMod({
-			game,
-			mod
-		});
+		mod = {
+			...mod,
+			...parseVanillaMod({
+				game,
+				mod
+			})
+		};
 	}
 
 	mods.push(mod);
