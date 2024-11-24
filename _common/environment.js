@@ -85,7 +85,7 @@ const {
 		})
 );
 
-const modlistModifiedFilePath = join(dirname(modlistFilePath), `modified-${basename(modlistFilePath)}`);
+const modlistOldFilePath = join(dirname(modlistFilePath), `old-${basename(modlistFilePath)}`);
 
 const parseOutputModifiedFilePath = join(dirname(parseOutputFilePath), `modified-${basename(parseOutputFilePath)}`);
 
@@ -93,7 +93,7 @@ export {
 	game,
 	masterlistFilePath,
 	modlistFilePath,
-	modlistModifiedFilePath,
+	modlistOldFilePath,
 	modsFolderPath,
 	nexusModsApiKey,
 	parseOutputFilePath,

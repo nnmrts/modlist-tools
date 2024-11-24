@@ -34,7 +34,12 @@ const modlistFileContent = await readTextFile(modlistFilePath);
 
 const rawMods = modlistFileContent
 	.split(/\r?\n/u)
-	.filter((line) => line.startsWith("*") || line.startsWith("+") || line.startsWith("-"))
+	.filter((line) => (
+		(
+			line.startsWith("*") || line.startsWith("+") || line.startsWith("-")
+		) &&
+		!line.endsWith("_separator")
+	))
 	.map((line) => ({
 		enabled: !line.startsWith("-"),
 		name: line.slice(1).trim()

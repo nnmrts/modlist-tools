@@ -2,7 +2,7 @@ import sortList from "../_common/sort-list.js";
 
 import { listFormatter } from "./merge-list/_exports.js";
 
-const separator = " > ";
+const separator = " - ";
 
 /**
  *
