@@ -1,13 +1,16 @@
-import { join } from "@std/path";
+import {
+	join
+} from "@std/path";
 
 import {
 	game,
+	isVanillaMod,
 	modlistFilePath,
 	modsFolderPath,
-	parseOutputFilePath
+	parseOutputFilePath,
+	parseOutputModifiedFilePath
 } from "./_common/_exports.js";
 import {
-	isVanillaMod,
 	parseLootLists,
 	parseMod,
 	parseVanillaMod
@@ -18,8 +21,12 @@ import {
  */
 
 const {
+	errors: {
+		NotFound
+	},
 	readDir,
 	readTextFile,
+	stat,
 	writeTextFile
 } = Deno;
 
@@ -82,3 +89,12 @@ await parseLootLists();
 const parseOutputFileContent = JSON.stringify(mods, null, "\t");
 
 await writeTextFile(parseOutputFilePath, parseOutputFileContent);
+
+try {
+	await stat(parseOutputModifiedFilePath);
+}
+catch (error) {
+	if (error instanceof NotFound) {
+		await writeTextFile(parseOutputModifiedFilePath, parseOutputFileContent);
+	}
+}

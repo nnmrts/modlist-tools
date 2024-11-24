@@ -18,5 +18,5 @@
  * @property {readonly ModFile[]} files - The mod files.
  * @property {readonly string[]} tags - The mod tags.
  * @property {number|null} id - The Nexus Mods ID or for vanilla mods a manually assigned nonpositive number.
- * @property {readonly ModRequirement[]} requirements - The requirements.
+ * @property {readonly (number|ModRequirement)[]} requirements - The requirements.
  */

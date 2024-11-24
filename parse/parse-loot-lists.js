@@ -35,11 +35,6 @@ const parseLootLists = async () => {
 			}
 		)
 	);
-
-	console.log(
-		masterlistPlugins
-			.filter(({ group }) => group)
-	);
 };
 
 export default parseLootLists;

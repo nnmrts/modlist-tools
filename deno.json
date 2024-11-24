@@ -1,6 +1,7 @@
 {
 	"tasks": {
-		"parse": "deno run -A --env-file=.env parse.js"
+		"parse": "deno run -A --env-file=.env parse.js",
+		"stringify": "deno run -A --env-file=.env stringify.js"
 	},
 	"imports": {
 		"@pumpn/type-party": "jsr:@pumpn/type-party@^0.1.17",

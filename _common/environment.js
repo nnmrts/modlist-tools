@@ -1,3 +1,9 @@
+import {
+	basename,
+	dirname,
+	join
+} from "@std/path";
+
 const {
 	build: {
 		os
@@ -79,13 +85,19 @@ const {
 		})
 );
 
+const modlistModifiedFilePath = join(dirname(modlistFilePath), `modified-${basename(modlistFilePath)}`);
+
+const parseOutputModifiedFilePath = join(dirname(parseOutputFilePath), `modified-${basename(parseOutputFilePath)}`);
+
 export {
 	game,
 	masterlistFilePath,
 	modlistFilePath,
+	modlistModifiedFilePath,
 	modsFolderPath,
 	nexusModsApiKey,
 	parseOutputFilePath,
+	parseOutputModifiedFilePath,
 	pluginsFilePath,
 	userlistFilePath
 };

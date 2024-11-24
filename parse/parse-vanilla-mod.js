@@ -1,4 +1,4 @@
-import { vanillaMods } from "./_common/_exports.js";
+import vanillaMods from "../_common/vanilla-mods.js";
 
 /**
  * @import { Mod } from "../_common/mod.doc.js";

@@ -10,4 +10,5 @@
 /**
  * @typedef {object} NexusModsMod
  * @property {string} summary - The summary of the mod.
+ * @property {readonly {id: number, notes: string|null}[]} requirements
  */

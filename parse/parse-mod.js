@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable max-statements */
 /* eslint-disable max-lines-per-function */
 
@@ -42,6 +43,7 @@ const maximumDescriptionLength = 10_000;
 /**
  *
  * @param {string} modFolderPath
+ * @returns {Promise<Mod>}
  * @example
  */
 const parseMod = async (modFolderPath) => {
@@ -171,17 +173,21 @@ const parseMod = async (modFolderPath) => {
 									.querySelector("td.table-require-notes")
 									?.textContent;
 
-								return {
-									id: requiredModId,
-									notes: requiredModNotes || null
-								};
+								if (requiredModNotes) {
+									return {
+										id: requiredModId,
+										notes: requiredModNotes
+									};
+								}
+
+								return requiredModId;
 							});
 					}
 					else {
 						nexusModsMod.requirements = [];
 					}
 
-					if (nexusModsMod.description.length > 10_000) {
+					if (nexusModsMod.description.length > maximumDescriptionLength) {
 						nexusModsMod.description = "";
 					}
 
@@ -203,6 +209,7 @@ const parseMod = async (modFolderPath) => {
 		}
 		else {
 			mod.summary = cachedNexusModsMod.summary;
+			mod.requirements = cachedNexusModsMod.requirements;
 		}
 	}
 	catch (error) {

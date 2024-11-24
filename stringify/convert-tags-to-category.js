@@ -1,6 +1,10 @@
 import { chain } from "@radashi-org/radashi";
 
-import { formatList, sortList } from "./convert-tags-to-category/_exports.js";
+import { sortList } from "./_common/_exports.js";
+import {
+	formatList,
+	mergeList
+} from "./convert-tags-to-category/_exports.js";
 
 /**
  *
@@ -9,6 +13,7 @@ import { formatList, sortList } from "./convert-tags-to-category/_exports.js";
  */
 const convertTagsToCategory = (tags) => chain(
 	sortList,
+	mergeList,
 	formatList
 )(tags);
 
