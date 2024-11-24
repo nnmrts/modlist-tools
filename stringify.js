@@ -71,7 +71,7 @@ const groupMods = (ungroupedMods) => [
 					.filter(({ tags }) => {
 						const innerCategory = convertTagsToCategory(tags);
 
-						return !(!innerCategory.includes(" - ") || innerCategory.replaceAll(/\(.*?\)/gu, "").includes(" | "));
+						return !(!innerCategory.includes(" - ") || innerCategory.replaceAll(/\(.*?\)/gu, "").includes(" & "));
 					})
 					.map(({ tags, ...rest }) => ({
 						...rest,

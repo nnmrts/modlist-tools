@@ -38,7 +38,7 @@ const mergeList = (list) => {
 				);
 
 				const formattedMergedGroupedItems = mergedGroupedItems
-					.join(" | ");
+					.join(" & ");
 
 				return [
 					topLevel,
