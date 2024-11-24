@@ -172,7 +172,7 @@ for await (const { isDirectory, name } of readDir(modsFolderPath)) {
 	if (isDirectory && name.endsWith("_separator")) {
 		const separatorFolderPath = join(modsFolderPath, name);
 
-		await remove(separatorFolderPath);
+		await remove(separatorFolderPath, { recursive: true });
 	}
 }
 
