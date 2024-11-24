@@ -32,10 +32,13 @@ const {
 
 const modlistFileContent = await readTextFile(modlistFilePath);
 
-const enabledMods = modlistFileContent
+const rawMods = modlistFileContent
 	.split(/\r?\n/u)
-	.filter((line) => line.startsWith("*") || line.startsWith("+"))
-	.map((line) => line.slice(1).trim())
+	.filter((line) => line.startsWith("*") || line.startsWith("+") || line.startsWith("-"))
+	.map((line) => ({
+		enabled: !line.startsWith("-"),
+		name: line.slice(1).trim()
+	}))
 	.toReversed();
 
 const modsFolderEntries = await Array.fromAsync(readDir(modsFolderPath));
@@ -49,23 +52,24 @@ const modFolderNames = new Set(modsFolderEntries
  */
 const mods = [];
 
-for (const modName of enabledMods) {
+for (const { enabled, name } of rawMods) {
 	/**
 	 * @type {Mod}
 	 */
 	let mod = {
 		id: null,
+		enabled,
 		files: [],
-		name: modName,
+		name,
 		requirements: [],
 		summary: null,
 		tags: []
 	};
 
-	console.info(`Parsing ${modName}...`);
+	console.info(`Parsing ${name}...`);
 
-	if (modFolderNames.has(modName)) {
-		const modFolderPath = join(modsFolderPath, modName);
+	if (modFolderNames.has(name)) {
+		const modFolderPath = join(modsFolderPath, name);
 
 		mod = await parseMod(modFolderPath);
 	}
