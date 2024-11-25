@@ -91,7 +91,7 @@ const groupMods = (ungroupedMods) => [
  * @example
  */
 const stringifyToModlistMods = (modTree, level = 0) => modTree.map(([separator, modsOrTrees]) => [
-	`-${"-".repeat(level)}${separator}_separator`,
+	`-${"==".repeat(level)} ${separator} ${"==".repeat(level)}_separator`,
 	...modsOrTrees
 		.filter((modOrTree) => !Array.isArray(modOrTree))
 		.map(({ enabled, name }) => {
