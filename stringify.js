@@ -88,10 +88,11 @@ const groupMods = (ungroupedMods) => [
  *
  * @param modTree
  * @param level
+ * @param parents
  * @example
  */
-const stringifyToModlistMods = (modTree, level = 0) => modTree.map(([separator, modsOrTrees]) => [
-	`-${"==".repeat(level)} ${separator} ${"==".repeat(level)}_separator`,
+const stringifyToModlistMods = (modTree, level = 0, parents = []) => modTree.map(([separator, modsOrTrees]) => [
+	`-${parents.map((parent) => `[${parent}]`).join("")}[${separator}]_separator`,
 	...modsOrTrees
 		.filter((modOrTree) => !Array.isArray(modOrTree))
 		.map(({ enabled, name }) => {
@@ -110,7 +111,7 @@ const stringifyToModlistMods = (modTree, level = 0) => modTree.map(([separator, 
 		}),
 	...modsOrTrees
 		.filter((modOrTree) => Array.isArray(modOrTree))
-		.map((tree) => stringifyToModlistMods([tree], level + 1))
+		.map((tree) => stringifyToModlistMods([tree], level + 1, [...parents, separator]))
 ]
 	.join("\n"))
 	.join("\n");
