@@ -46,10 +46,14 @@ const mods = JSON.parse(parseOutputModifiedFileContent).map(({ files, ...rest })
 const groupMods = (ungroupedMods) => [
 	...Map.groupBy(
 		ungroupedMods,
-		({ tags }) => {
+		({ name, tags }) => {
 			const category = convertTagsToCategory(tags);
 
-			if (category.replaceAll(/\(.*?\)/gu, "").includes(" | ")) {
+			if (name.includes("BattleMeals")) {
+				console.log(category);
+			}
+
+			if (category.replaceAll(/\(.*?\)/gu, "").includes(" & ")) {
 				return category;
 			}
 
@@ -64,7 +68,7 @@ const groupMods = (ungroupedMods) => [
 				.filter(({ tags }) => {
 					const innerCategory = convertTagsToCategory(tags);
 
-					return !innerCategory.includes(" - ") || innerCategory.replaceAll(/\(.*?\)/gu, "").includes(" | ");
+					return !innerCategory.includes(" - ") || innerCategory.replaceAll(/\(.*?\)/gu, "").includes(" & ");
 				}),
 			...groupMods(
 				modsInCategory
@@ -122,7 +126,11 @@ const stringifyToModlistMods = (modTree, level = 0, parents = []) => modTree.map
  * @example
  */
 const stringifyToModlist = (mods) => {
+	console.log(mods.find(({ name }) => name.includes("BattleMeals")));
+
 	const tree = groupMods(mods);
+
+	console.log(tree);
 
 	const mainText = stringifyToModlistMods(tree)
 		.split("\n")
