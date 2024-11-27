@@ -16,9 +16,12 @@ const parseOutputModifiedFileContent = await readTextFile(parseOutputModifiedFil
 
 const parseOutputModified = JSON.parse(parseOutputModifiedFileContent);
 
-const mods = parseOutputModified.map((mod) => ({
-	...mod,
-	enabled: parseOutput.find(({ name }) => name === mod.name)?.enabled ?? false
-}));
+const mods = parseOutputModified.map((mod) => Object.fromEntries(
+	Object.entries({
+		...mod,
+		enabled: parseOutput.find(({ name }) => name === mod.name)?.enabled ?? false
+	})
+		.toSorted(([keyA], [keyB]) => keyA.localeCompare(keyB))
+));
 
 await writeTextFile(parseOutputModifiedFilePath, JSON.stringify(mods, null, "\t"));
