@@ -3,7 +3,8 @@
 		"parse": "deno run -A --env-file=.env parse.js",
 		"stringify": "deno run -A --env-file=.env stringify.js",
 		"apply-tags": "deno run -A --env-file=.env apply-tags.js",
-		"update-enabled": "deno run -A --env-file=.env update-enabled.js"
+		"update-enabled": "deno run -A --env-file=.env update-enabled.js",
+		"sort": "deno run -A --env-file=.env sort.js"
 	},
 	"imports": {
 		"@pumpn/type-party": "jsr:@pumpn/type-party@^0.1.17",
